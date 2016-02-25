@@ -21,7 +21,7 @@ def combine(capture, exon_coverage, cds_coverage, target):
     '''
         combine capture stats with coverage stats
     '''
-    target.write('Gene\tNextera CDS Bases\tNextera Exon Bases\tRefSeq CDS Bases\tRefSeq Exon Bases\tCDS Coverage\tExon Coverage\tAlternative Names\tExon Mean of Mean Coverage\tExon Mean Coverage SD\tExon Mean of Median Coverage\tExon Mean of Percent>20x\tExon Mean Percent SD\tCDS Mean of Mean Coverage\tCDS Mean Coverage SD\tCDS Mean of Median Coverage\tCDS Mean of Percent>20x\tCDS Mean Percent SD\n')
+    target.write('id\tnextera_cds_bases\tnextera_exon_bases\trefseq_cds_bases\trefseq_exon_bases\tcds_coverage\texon_coverage\talternative_names\texon_mean_of_mean_coverage\texon_mean_coverage_sd\texon_mean_of_median_coverage\texon_mean_of_percent_20x\texon_mean_percent_sd\tcds_mean_of_mean_coverage\tcds_mean_coverage_sd\tcds_mean_of_median_coverage\tcds_mean_of_percent_20x\tcds_mean_percent_sd\tvep_annotation\n')
     exon_info = {}
     for line in exon_coverage:
         gene = line.split('\t')[0]
@@ -48,10 +48,12 @@ def combine(capture, exon_coverage, cds_coverage, target):
         if gene in cds_info:
             target.write('\t')
             target.write('\t'.join(cds_info[gene].strip('\n').split('\t')[1:6]))
-            target.write('\n')
         else:
             target.write('\t')
-            target.write('0\t0\t0\t0\t0\n')
+            target.write('0\t0\t0\t0\t0')
+
+        target.write('\t1') # vep_annotation
+        target.write('\n')
 
 def main():
     '''
