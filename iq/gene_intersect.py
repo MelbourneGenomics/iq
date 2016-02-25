@@ -100,9 +100,9 @@ def find_intersect(refseq, capture_handle, hgnc_handle, target, log):
     target.write('{0}\t{1}\t{2}\t{3}\t{4}\n'.format('Gene', 'Bases Covered', 'Total Bases', '% Covered', 'Alternate Names'))
     for gene in sorted(refseq_total):
         if len(refseq_total[gene]) == 0:
-            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(gene, len(refseq_match[gene]), len(refseq_total[gene]), 0, ','.join(sorted(list(hgnc[gene])))))
+            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(gene, len(refseq_match[gene]), len(refseq_total[gene]), 0, ', '.join(sorted(list(hgnc[gene])))))
         else:
-            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(gene, len(refseq_match[gene]), len(refseq_total[gene]), 100. * len(refseq_match[gene]) / len(refseq_total[gene]), ','.join(sorted(list(hgnc[gene])))))
+            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(gene, len(refseq_match[gene]), len(refseq_total[gene]), 100. * len(refseq_match[gene]) / len(refseq_total[gene]), ', '.join(sorted(list(hgnc[gene])))))
 
 def main():
     '''
