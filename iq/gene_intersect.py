@@ -49,6 +49,7 @@ def find_intersect(refseq, capture_handle, hgnc_handle, target, log):
     # refseq
     write_log(log, 'Processing refseq...')
     refseq_total = collections.defaultdict(set)
+    refseq_original_gene_name = collections.defaultdict(set)
     refseq_match = collections.defaultdict(set)
     for idx, line in enumerate(refseq):
         if line.startswith('#'):
@@ -56,7 +57,9 @@ def find_intersect(refseq, capture_handle, hgnc_handle, target, log):
         fields = line.strip().split()
         if len(fields) > 3:
             chrom = fields[0].upper()
-            gene = fields[3].upper()
+            original_gene_name = fields[3]
+            gene = original_gene_name.upper()
+            refseq_original_gene_name[gene] = original_gene_name
             start = int(fields[1])
             finish = int(fields[2])
             if gene not in refseq_total:
@@ -100,9 +103,9 @@ def find_intersect(refseq, capture_handle, hgnc_handle, target, log):
     target.write('{0}\t{1}\t{2}\t{3}\t{4}\n'.format('Gene', 'Bases Covered', 'Total Bases', '% Covered', 'Alternate Names'))
     for gene in sorted(refseq_total):
         if len(refseq_total[gene]) == 0:
-            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(gene, len(refseq_match[gene]), len(refseq_total[gene]), 0, ', '.join(sorted(list(hgnc[gene])))))
+            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(refseq_original_gene_name[gene], len(refseq_match[gene]), len(refseq_total[gene]), 0, ', '.join(sorted(list(hgnc[gene])))))
         else:
-            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(gene, len(refseq_match[gene]), len(refseq_total[gene]), 100. * len(refseq_match[gene]) / len(refseq_total[gene]), ', '.join(sorted(list(hgnc[gene])))))
+            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(refseq_original_gene_name[gene], len(refseq_match[gene]), len(refseq_total[gene]), 100. * len(refseq_match[gene]) / len(refseq_total[gene]), ', '.join(sorted(list(hgnc[gene])))))
 
 def main():
     '''
