@@ -75,23 +75,29 @@ def find_intersect(refseq, capture_handle, hgnc_handle, target, log):
     # refseq other names
     # refseq_alt = collections.defaultdict(set)
     write_log(log, 'Parsing hgnc...')
-    hgnc = collections.defaultdict(set)
+    hgnc = collections.defaultdict(set) # maps correct to alternatives
+    hgnc_original = {} # maps upper case to lower case
+    hgnc_alt = {} # maps old to correct
     skipped = 0
     idx = 0
     for idx, line in enumerate(hgnc_handle):
         fields = line.strip().split('\t')
         if len(fields) > 10:
-            correct = fields[1].upper()
+            original = fields[1]
+            correct = original.upper()
             old = set()
             alias = fields[8]
             previous = fields[10]
             if len(alias) > 0:
                 for i in alias.strip('"').split('|'):
                     old.add(i.upper())
+                    hgnc_alt[i.upper()] = correct
             if len(previous) > 0:
                 for i in previous.strip('"').split('|'):
                     old.add(i.upper())
+                    hgnc_alt[i.upper()] = correct
             hgnc[correct] = old
+            hgnc_original[correct] = original
             if idx < 3:
                 write_log(log, hgnc)
         else:
@@ -102,10 +108,17 @@ def find_intersect(refseq, capture_handle, hgnc_handle, target, log):
     # write results
     target.write('{0}\t{1}\t{2}\t{3}\t{4}\n'.format('Gene', 'Bases Covered', 'Total Bases', '% Covered', 'Alternate Names'))
     for gene in sorted(refseq_total):
-        if len(refseq_total[gene]) == 0:
-            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(refseq_original_gene_name[gene], len(refseq_match[gene]), len(refseq_total[gene]), 0, ', '.join(sorted(list(hgnc[gene])))))
+        if gene in hgnc_alt:
+            hgnc_gene = hgnc_alt[gene] # correct to hgnc 
+            hgnc_gene_original = hgnc_original[hgnc_gene] # remove case change
         else:
-            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(refseq_original_gene_name[gene], len(refseq_match[gene]), len(refseq_total[gene]), 100. * len(refseq_match[gene]) / len(refseq_total[gene]), ', '.join(sorted(list(hgnc[gene])))))
+            hgnc_gene = gene
+            hgnc_gene_original = refseq_original_gene_name[gene]
+
+        if len(refseq_total[gene]) == 0:
+            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(hgnc_gene_original, len(refseq_match[gene]), len(refseq_total[gene]), 0, ', '.join(sorted(list(hgnc[hgnc_gene])))))
+        else:
+            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(hgnc_gene_original, len(refseq_match[gene]), len(refseq_total[gene]), 100. * len(refseq_match[gene]) / len(refseq_total[gene]), ', '.join(sorted(list(hgnc[hgnc_gene])))))
 
 def main():
     '''
