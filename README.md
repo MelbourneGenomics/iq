@@ -78,6 +78,15 @@ Output
 * cds_mean_percent_sd: the standard deviation of the mean percentage coverage across samples.
 * vep_annotation: 1 if VEP can annotate this gene, 0 otherwise
 
+Combining multiple capture results
+----------------------------------
+Example:
+```
+paste data/nextera-all_stats.161026.txt data/cre-all_stats.161026.txt > data/all-stats-combined.161026.txt
+head -1 data/all-stats-combined.161026.txt | sed 's/       /\n/g' | grep -n "."
+cut -f1-19,21-22,25-26,28-37 < data/all-stats-combined.161026.txt > data/all-stats-combined.161026.cleaned.txt
+```
+
 Running unit tests
 ------------------
 To run the tests:
