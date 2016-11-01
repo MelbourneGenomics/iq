@@ -47,3 +47,6 @@ python iq/merge_iq.py 005.out 007.out 009.out 010.out 012.out 014.out > ./data/f
 
 # final combo
 python iq/combine_all_stats.py --capture_overlap ./data/combined-coverage.$VER.txt --exons ./data/final_stats_raw.$VER.txt --cds ./data/final_stats_cds.$VER.txt > ./data/all_stats.$VER.txt
+
+# now add coords to output
+python iq/add_gene_coords.py ./data/exons-raw.$VER ./data/hgnc_complete_set.$VER.txt < ./data/all_stats.$VER.txt > ../data/all_stats_coords.$VER.tsv
