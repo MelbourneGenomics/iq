@@ -55,18 +55,18 @@ def add_gene_coords(tsv_in, tsv_out, bed, hgnc_handle, log):
     for idx, line in enumerate(tsv_in):
         fields = line.strip().split('\t')
         if first:
-            new_fields = [fields[0], 'Chromosome', 'StartPos', 'EndPos'] + fields[1:]
+            new_fields = [fields[0], fields[1], 'chromosome', 'start_pos', 'end_pos'] + fields[2:]
             first = False 
-        elif fields[0] in chroms:
-            new_fields = [fields[0], chroms[fields[0]], str(low[fields[0]]), str(high[fields[0]])] + fields[1:]
-        elif fields[0] in hgnc:
-            for alt in hgnc[fields[0]]:
+        elif fields[1] in chroms:
+            new_fields = [fields[0], fields[1], chroms[fields[1]], str(low[fields[1]]), str(high[fields[1]])] + fields[2:]
+        elif fields[1] in hgnc:
+            for alt in hgnc[fields[1]]:
                 if alt in chroms:
-                    new_fields = [fields[0], chroms[alt], str(low[alt]), str(high[alt])] + fields[1:]
+                    new_fields = [fields[0], fields[1], chroms[alt], str(low[alt]), str(high[alt])] + fields[2:]
                     break
         else:
-            log.write('WARNING: gene {} not found.\n'.format(fields[0]))
-            new_fields = [fields[0], '?', '0', '0'] + fields[1:]
+            log.write('WARNING: gene {} not found.\n'.format(fields[1]))
+            new_fields = [fields[0], fields[1], '?', '0', '0'] + fields[2:]
         tsv_out.write('\t'.join(new_fields))
         tsv_out.write('\n')
         if idx % 1000 == 0:

@@ -21,7 +21,7 @@ def combine(capture, exon_coverage, cds_coverage, target):
     '''
         combine capture stats with coverage stats
     '''
-    target.write('id\tnextera_cds_bases\tnextera_exon_bases\trefseq_cds_bases\trefseq_exon_bases\tcds_coverage\texon_coverage\talternative_names\texon_mean_of_mean_coverage\texon_mean_coverage_sd\texon_mean_of_median_coverage\texon_mean_of_percent_20x\texon_mean_percent_sd\tcds_mean_of_mean_coverage\tcds_mean_coverage_sd\tcds_mean_of_median_coverage\tcds_mean_of_percent_20x\tcds_mean_percent_sd\tvep_annotation\n')
+    target.write('original_gene\thgnc\tnextera_cds_bases\tnextera_exon_bases\trefseq_cds_bases\trefseq_exon_bases\tcds_coverage\texon_coverage\talternative_names\texon_mean_of_mean_coverage\texon_mean_coverage_sd\texon_mean_of_median_coverage\texon_mean_of_percent_20x\texon_mean_percent_sd\tcds_mean_of_mean_coverage\tcds_mean_coverage_sd\tcds_mean_of_median_coverage\tcds_mean_of_percent_20x\tcds_mean_percent_sd\tvep_annotation\n')
     exon_info = {}
     for line in exon_coverage:
         gene = line.split('\t')[0]
@@ -36,7 +36,8 @@ def combine(capture, exon_coverage, cds_coverage, target):
         gene = line.split('\t')[0]
         if gene == 'Gene':
             continue
-        target.write(line.strip('\n'))
+        capture_fields = line.strip('\n').split('\t')
+        target.write('\t'.join([capture_fields[-1]] + capture_fields[:-1])) # move original gene name to start
 
         if gene in exon_info:
             target.write('\t')

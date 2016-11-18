@@ -106,9 +106,9 @@ def find_intersect(refseq, capture_handle, hgnc_handle, target, log):
     write_log(log, hgnc['SDHAF3'])
 
     # write results
-    target.write('{0}\t{1}\t{2}\t{3}\t{4}\n'.format('Gene', 'Bases Covered', 'Total Bases', '% Covered', 'Alternate Names'))
+    target.write('{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n'.format('Gene', 'Bases Covered', 'Total Bases', '% Covered', 'Alternate Names', 'Original'))
     for gene in sorted(refseq_total):
-        if gene in hgnc_alt:
+        if gene in hgnc_alt and gene not in hgnc: # only correct if not already approved
             hgnc_gene = hgnc_alt[gene] # correct to hgnc 
             hgnc_gene_original = hgnc_original[hgnc_gene] # remove case change
         else:
@@ -116,9 +116,9 @@ def find_intersect(refseq, capture_handle, hgnc_handle, target, log):
             hgnc_gene_original = refseq_original_gene_name[gene]
 
         if len(refseq_total[gene]) == 0:
-            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(hgnc_gene_original, len(refseq_match[gene]), len(refseq_total[gene]), 0, ', '.join(sorted(list(hgnc[hgnc_gene])))))
+            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\t{5}\n'.format(hgnc_gene_original, len(refseq_match[gene]), len(refseq_total[gene]), 0, ', '.join(sorted(list(hgnc[hgnc_gene]))), gene))
         else:
-            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\n'.format(hgnc_gene_original, len(refseq_match[gene]), len(refseq_total[gene]), 100. * len(refseq_match[gene]) / len(refseq_total[gene]), ', '.join(sorted(list(hgnc[hgnc_gene])))))
+            target.write('{0}\t{1}\t{2}\t{3:.2f}\t{4}\t{5}\n'.format(hgnc_gene_original, len(refseq_match[gene]), len(refseq_total[gene]), 100. * len(refseq_match[gene]) / len(refseq_total[gene]), ', '.join(sorted(list(hgnc[hgnc_gene]))), gene))
 
 def main():
     '''
